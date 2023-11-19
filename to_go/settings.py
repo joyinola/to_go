@@ -51,8 +51,8 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework_simplejwt',
     'rideshare',
-    'rider',
-    'passenger',
+    'account',
+    'chat',
     'corsheaders',    
     'cloudinary_storage',
     'cloudinary'
@@ -115,7 +115,7 @@ DATABASES = {
         } 
     }  
 
-AUTH_USER_MODEL = 'rideshare.User'
+AUTH_USER_MODEL = 'account.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

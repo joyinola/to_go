@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include('rideshare.urls')),
-    path('api/rider/', include('rider.urls')),
-    path('api/passenger/', include('passenger.urls')),
+    path('api/account/', include('account.urls')),
+    # path('chat/', include('chat.urls')),
+    # path('api/passenger/', include('passenger.urls')),
 ]  
