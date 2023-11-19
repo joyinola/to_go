@@ -175,6 +175,8 @@ cloudinary.config(
   api_key = os.getenv('api_key'), 
   api_secret = os.getenv('api_secret') 
 )
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
