@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-import django_heroku 
+
 #load environmnt variables from .env
 load_dotenv()
 
@@ -117,7 +117,7 @@ DATABASES = {
     }  
 
 AUTH_USER_MODEL = 'account.User'
-django_heroku.settings(locals())
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -211,3 +211,7 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
     'USER_ID_FIELD': 'email'
 } 
+
+# Configure Django App for Heroku.
+import django_heroku
+django_heroku.settings(locals())
