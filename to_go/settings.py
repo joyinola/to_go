@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import django_heroku 
 #load environmnt variables from .env
 load_dotenv()
 
@@ -116,7 +117,7 @@ DATABASES = {
     }  
 
 AUTH_USER_MODEL = 'account.User'
-
+django_heroku.settings(locals())
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -173,7 +174,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 cloudinary.config( 
   cloud_name = os.getenv('cloud_name'), 
   api_key = os.getenv('api_key'), 
-  api_secret = os.getenv('api_secret') 
+  api_secret = os.getenv('api_secret')
+#   api_proxy = 'http://proxy.server:3128'
 )
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
