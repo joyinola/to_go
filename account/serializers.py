@@ -205,7 +205,7 @@ class RiderSerializer(serializers.ModelSerializer):
                 brand = validated_data.get('brand',None),
                 plate_no = validated_data.get('plate_no',None),
                 seat_cap = validated_data.get('seat_cap', None ),
-                seat_available = validated_data.get('seat_cap', None ),
+                # seat_available = validated_data.get('seat_cap', None ),
 
         )
         # vehicle_obj.save()
