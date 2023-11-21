@@ -34,18 +34,18 @@ def send_otp(user):
     {otp}
     """
     context = {"user_name": user_name, "otp": otp}
-    try:
-        send_mail(
-            subject=subject,
-            message=email_body,
-            from_email=None,
-            html_message=get_template("rideshare/otp.html").render(context),
-            recipient_list=[user.email],
-            fail_silently=False,
-        )
-        return otp
-    except Exception as exception:
-        return False
+    # try:
+    send_mail(
+        subject=subject,
+        message=email_body,
+        from_email=None,
+        html_message=get_template("rideshare/otp.html").render(context),
+        recipient_list=[user.email],
+        fail_silently=False,
+    )
+    return otp
+    # except Exception as exception:
+    #     return False
     
 def verify_otp(user,otp):
     return totp.verify(otp,user.created_at,valid_window=60)
