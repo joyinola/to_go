@@ -34,7 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -78,7 +78,7 @@ ROOT_URLCONF = "to_go.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "rideshare", "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -110,7 +110,8 @@ REST_FRAMEWORK = {
 
 DATABASES = {  
         'default': {  
-            'ENGINE': 'django.db.backends.postgresql',  
+            'ENGINE': 'django.db.backends.postgresql', 
+            # 'ENGINE': 'django.db.backends.mysql',
             'NAME': os.getenv('database'),  
             'USER': os.getenv('user'),  
             'PASSWORD': os.getenv('password'),  
@@ -219,4 +220,4 @@ SIMPLE_JWT = {
 
 # Configure Django App for Heroku.
 import django_heroku
-django_heroku.settings(locals(),staticfiles=False)
+django_heroku.settings(locals())
