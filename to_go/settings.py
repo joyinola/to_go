@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-# import dj_database_url
+import dj_database_url
 
 #load environmnt variables from .env
 load_dotenv()
@@ -64,6 +64,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -113,13 +114,13 @@ DATABASES = {
             'NAME': os.getenv('database'),  
             'USER': os.getenv('user'),  
             'PASSWORD': os.getenv('password'),  
-            'HOST': os.getenv('host'),  
+            'HOST': os.getenv('host'),   
             'PORT': os.getenv('port')
         } 
     }  
 
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-
+# DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 AUTH_USER_MODEL = 'account.User'
 
 # Password validation
