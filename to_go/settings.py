@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import dj_database_url
 
 #load environmnt variables from .env
 load_dotenv()
@@ -105,16 +106,19 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {  
         'default': {  
-            'ENGINE': os.getenv('ENGINE'),  
-            'NAME': os.getenv('database'),  
-            'USER': os.getenv('user'),  
-            'PASSWORD': os.getenv('password'),  
-            'HOST': os.getenv('host'),  
-            'PORT': os.getenv('port')
+            # 'ENGINE': os.getenv('ENGINE'),  
+            # 'NAME': os.getenv('database'),  
+            # 'USER': os.getenv('user'),  
+            # 'PASSWORD': os.getenv('password'),  
+            # 'HOST': os.getenv('host'),  
+            # 'PORT': os.getenv('port')
         } 
     }  
+
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 AUTH_USER_MODEL = 'account.User'
 
