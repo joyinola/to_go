@@ -272,7 +272,7 @@ class PassengerRegistration(CreateAPIView):
         return Response(response, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
-
+ 
         passenger_obj = serializer.save()
         user = passenger_obj.user
 

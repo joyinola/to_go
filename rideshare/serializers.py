@@ -13,7 +13,7 @@ class RequestPassswordResetEmailSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
      class Meta:
           model = User
-          fields = ['first_name', 'id','last_name', 'email','is_verified',]
+          fields = ['first_name', 'id','last_name', 'email','is_verified','user_picture']
 
 class VehicleSerializer(serializers.ModelSerializer):
      # seat_available = serializers.SerializerMethodField()
@@ -37,7 +37,7 @@ class RiderSerializer(serializers.ModelSerializer):
      user = UserSerializer()
      class Meta:
           model = rider
-          fields = ['id','user','picture','vehicle', 'route_from','route_to','price']
+          fields = ['id','user','vehicle', 'route_from','route_to','price']
 
 class PassengerSerializer(serializers.ModelSerializer):
      # vehicle = VehicleSerializer()

@@ -24,6 +24,7 @@ class PassangerSerializier(serializers.ModelSerializer):
     last_name =  serializers.CharField(write_only=True, required=True)
     password = serializers.CharField(write_only=True, required=True)
     phone_no = serializers.CharField(write_only=True, required=True)
+    user_picture = serializers.ImageField(write_only=True, required=True)
     
   
     
@@ -36,6 +37,7 @@ class PassangerSerializier(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'phone_no',
+            'user_picture'
             
         ]
 
@@ -77,13 +79,14 @@ class PassangerSerializier(serializers.ModelSerializer):
     
         user_obj.first_name = validated_data.pop('first_name',None)
         user_obj.last_name = validated_data.pop('last_name',None)
+        user_obj.user_picture = validated_data.pop('user_picture',None)
         user_obj.set_password(validated_data.pop('password',None))
         user_obj.save()
 
         # passenger_obj.save()
         # try:
 
-        passenger_obj = passenger.objects.create(user = user_obj)
+        passenger_obj = passenger.objects.create(user = user_obj )
         # except:
         #     raise serializers.ValidationError('Passenger with this email AND phone already exists')
 
@@ -104,6 +107,8 @@ class RiderSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
     plate_no = serializers.CharField(write_only=True, required=True)
     phone_no = serializers.CharField(write_only=True, required=True)
+    user_picture = serializers.ImageField(write_only=True, required=True)
+    trip_duration = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = rider
@@ -123,7 +128,9 @@ class RiderSerializer(serializers.ModelSerializer):
                   'password',
                   'plate_no',
                   'email',
-                  'phone_no'
+                  'phone_no',
+                  'trip_duration',
+                  'user_picture',
                   
 
                   ]
@@ -189,6 +196,7 @@ class RiderSerializer(serializers.ModelSerializer):
         
         user_obj.first_name = validated_data.get('first_name',None)
         user_obj.last_name = validated_data.get('last_name',None)
+        user_obj.user_picture = validated_data.get('user_picture',None)
         user_obj.phone_no = validated_data.get('phone_no',None)
         user_obj.set_password(validated_data.get('password',None))
        
@@ -218,7 +226,8 @@ class RiderSerializer(serializers.ModelSerializer):
             route_to = validated_data.get('route_to',None),
             bus_stop = validated_data.get('bus_stop',None),
             licence = validated_data.get('license',None),
-            price = validated_data.get('price',None)
+            price = validated_data.get('price',None),
+            trip_duration = validated_data.get('trip_duration', None),
 
             )
         # rider_obj.save()

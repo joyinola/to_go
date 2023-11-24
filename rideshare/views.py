@@ -302,6 +302,9 @@ class CreateUpdateBankAccount(CreateAPIView):
     permission_classes = [IsAuthenticated&IsVerifiedAndRider]
     serializer_class = AccountDetailSerializer
     
+class Webhook(APIView):
+    def post(self,request,*arg,**kwarg):
+        pass
 
 class VerifyAccountNo(APIView):
     pass

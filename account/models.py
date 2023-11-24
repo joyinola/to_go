@@ -2,8 +2,12 @@ from django.db import models
 from django.contrib.auth import get_user_model
 
 # Create your models here.
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
+
+def upload_data(instance,filename):
+    return f'to_go/{instance.first_name}_{instance.last_name}_{instance.id}/document/{filename}'
 
 # from rideshare.models import card_detail,account,vehicle
 
@@ -56,6 +60,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     username = None
     email = models.CharField(max_length=125, unique=True)
     phone_no = models.CharField(max_length=125)
+    user_picture = models.ImageField(upload_to = upload_data)
     first_name = models.CharField(max_length=125)
     last_name = models.CharField(max_length=125)
     created_at = models.DateTimeField(auto_now_add=True)

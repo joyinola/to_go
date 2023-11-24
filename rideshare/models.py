@@ -11,13 +11,15 @@ def upload_data(instance,filename):
     return f'to_go/{instance.user.first_name}_{instance.user.last_name}_{instance.user.id}/document/{filename}'
 
 def upload_vehicle_pic(instance,filename):
+    # get_rider = rider.objects.get(vehicle=instance)
+    # get_rider = rider.objects.get(user = get_user)
     return f'to_go/plate_no/{instance.plate_no}/document/{filename}'
 
 
-class card_detail(models.Model):
-    card_no = models.CharField(max_length=125)
-    expiry_date =models.CharField(max_length=10)
-    cvv = models.CharField(max_length=3)
+# class card_detail(models.Model):
+#     card_no = models.CharField(max_length=125)
+#     expiry_date =models.CharField(max_length=10)
+#     cvv = models.CharField(max_length=3)
     
 # class vehicle(models.Model):
 #     # rider = models.ForeignKey(rider, on_delete=models.SET_NULL, null = True, blank = True)
@@ -29,12 +31,10 @@ class card_detail(models.Model):
 
 
 
-
-
 class passenger(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,null = True, blank = True)
     # card = models.ForeignKey(card_detail, on_delete=models.SET_NULL,blank = True,null = True)
-    picture = models.ImageField(upload_to=upload_data,null=True,blank=True)
+    # picture = models.ImageField(upload_to=upload_data,null=True,blank=True)
 
 class vehicle(models.Model):
     # rider = models.ForeignKey(rider, on_delete=models.SET_NULL, null = True, blank = True)
@@ -67,12 +67,12 @@ class AccountDetail(models.Model):
 
 class rider(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null = True, blank = True,related_name='rider')
-    picture = models.ImageField(upload_to=upload_data,null=True,blank=True)
+    # picture = models.ImageField(upload_to=upload_data,null=True,blank=True)
     vehicle = models.ForeignKey(vehicle, on_delete=models.SET_NULL, null = True, blank = True,related_name='rider')
     account = models.OneToOneField(AccountDetail, on_delete=models.SET_NULL,null=True,blank=True, related_name = 'rider')
     route_from = models.CharField(max_length=125)
     route_to = models.CharField(max_length=125)
-    trip_duration = models.CharField(max_length=10,default='1hr 30min')
+    trip_duration = models.CharField(max_length=10)
     bus_stop = models.CharField(max_length=125)
     licence = models.FileField(upload_to=upload_data,null=True,blank=True)
     price = models.IntegerField()
