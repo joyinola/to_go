@@ -302,14 +302,22 @@ class CreateUpdateBankAccount(CreateAPIView):
     permission_classes = [IsAuthenticated&IsVerifiedAndRider]
     serializer_class = AccountDetailSerializer
     
-class Webhook(APIView):
+class Webhook(APIView): #webhook for receiving and sending payment
+
     def post(self,request,*arg,**kwarg):
-        pass
-
-class VerifyAccountNo(APIView):
-    pass
-class ListBank(APIView):
-    pass
-
-def send_driver_money(price,):
-    pass
+        order_obj = Order.objects.get(reference = request.data.get('data').get('reference'))
+        if request.data.get('event') == 'charge.success' and int(order_obj.landmark.price)*100 == request.data.get('data').get('amount'):
+            order_obj.trip.rider.vehicle.seat_available-=1
+            order_obj.trip.rider.vehicle.save()
+            order_obj.has_paid = True
+            order_obj.rider_pay_ref = uuid.uuid4()
+            order_obj.order_datetime = datetime.datetime.now()
+            order_obj.save()
+        elif request.data.get('event') == 'transfer.failed':
+            data = {
+                    "amount": order_obj.rider_pay,
+                    "reference": order_obj.rider_pay_ref,
+                    "recipient": order_obj.rider.account.recipient_code
+                }
+            make_transfer(data)
+        return Response(status=status.HTTP_200_OK)
