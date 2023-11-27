@@ -37,7 +37,7 @@ urlpatterns =[
     path('vehicle_detail/',GetVehicleDetail.as_view(),name = 'vehicle-detail'),
     path('edit_route/',EditRoute.as_view(),name = 'edit-route'),
     path('update_trip_status/',UpdateTripStatus.as_view(),name = 'update-trip-status'),
-    path('webhook/', Webhook.as_view(),name ='webhook-url'),
+    path('webhook/', Webhook.as_view(),name ='webhook-url')
     
 
 
