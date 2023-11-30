@@ -7,10 +7,11 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, File
 from rest_framework import status
 
 
-from .utils import send_otp,verify_otp
-from .serializers import UserSerializer,RequestPassswordResetEmailSerializer,RiderSerializer,PassangerSerializier
 
-from .utils import PasswordResetTokenGenerator,decode_user_id,send_password_reset_email,password_reset_token_is_valid
+from .serializers import UserSerializer,RequestPassswordResetEmailSerializer,RiderSerializer,PassangerSerializier
+from rideshare.serializers import RiderSerializer as DriverSerializer
+from rideshare.models import Rider
+from .utils import send_otp,verify_otp,decode_user_id,send_password_reset_email,password_reset_token_is_valid
 
 User = get_user_model()
 
@@ -62,7 +63,6 @@ class VerifyOTP(APIView):
                {"error":"Incorrect OTP"},status=400
                )
               
-       
 
 class Login(APIView):
 
@@ -71,9 +71,9 @@ class Login(APIView):
             return Response({"detail": "You are already authenticated"}, status=400)
 
         email = request.data.get("email", None)
-        password = request.data.get("password", None)
+        password_ = request.data.get("password", None)
 
-        if not email or not password:
+        if not email or not password_:
             return Response(
                 {"error": "Please enter your email or password"}, status=400
             )
@@ -82,28 +82,30 @@ class Login(APIView):
             obj = User.objects.get(email=email)
         except:
             return Response({"error": "Email not registered"}, status=401)
+        if obj.check_password(password_):
+            user = UserSerializer(obj).data
 
-        if obj.check_password(password):
-            user = obj
-            token = RefreshToken.for_user(user).access_token
+            if obj.user_type == 'passenger':
+                user_extension = PassangerSerializier(obj).data
+                
+            elif obj.user_type == 'rider':
+                rider_obj = Rider.objects.get(user = obj)
+                user_extension = DriverSerializer(rider_obj).data
 
-# 
-            # if obj.user_type == 'rider':
+            token = RefreshToken.for_user(obj).access_token
 
             return Response(
                         {
                             "token": str(token),
-                            "user": str(user),
+                            "user": user_extension,
                         },
                         status=201,
                     )
-            # else:
-            #     Response({"error":"Unknown user perhaps login the passenger site or create a rider acount"}, status=400)
-
      
         else:
             return Response({"error": "Invalid password"}, status=401)
-        
+
+
 class ResetPassword(APIView):
     authentication_classes = []
     permission_classes = []
@@ -149,41 +151,6 @@ class ResetPassword(APIView):
         return Response(
             {"detail": "password successfully changed"}, status=status.HTTP_200_OK
         )
-class PassengerLogin(APIView):
-
-    def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return Response({"detail": "You are already authenticated"}, status=400)
-
-        email = request.data.get("email", None)
-        password = request.data.get("password", None)
-
-        if not email or not password:
-            return Response(
-                {"error": "Please enter your email or password"}, status=400)
-
-        try:
-            obj = User.objects.get(email=email)
-        except:
-            Response({"error": "Email not registered"}, status=401)
-
-        if obj.check_password(password):
-            user = obj
-            token = RefreshToken.for_user(user).access_token
-       
-            if obj.user_type == 'passenger':
-
-                return Response(
-                        {
-                            "token": str(token),
-                            "user": str(user),
-                        },
-                        status=201,
-                    )
-            else:
-                Response({"error":"Unknown user perhaps login the passenger site or create arider acount"}, status=400)
-        else:
-            return Response({"error": "Invalid password"}, status=401)
 
 
 class ForgetPassword(APIView):
@@ -216,46 +183,10 @@ class ForgetPassword(APIView):
                 {"error": "Email not sent"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-# class RiderForgetPassword(APIView):
-      
-#     def post(self, request):
-    
-#     # print(request.data)
-#         serializer = RequestPassswordResetEmailSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         email = serializer.data["email"]
-        
-#         user = User.objects.filter(email=email)
-#         if not user.exists():
-#             return Response(
-#                 {"error": "user with this email does not exist"},
-#                 status=status.HTTP_404_NOT_FOUND,
-#             )
-
-#         user = user.first()
-#         # acc = Account.objects.get(user = user)
-#         if not (user.user_type == 'rider'):
-#             return Response(
-#                 {"error": "rider with this email does not exist"},
-#                 status=status.HTTP_404_NOT_FOUND,
-#             )
-
-#         # server= settings.SERVER
-#         password_sent = send_password_reset_email(user, request)
-#         if password_sent:
-#             return Response(
-#                 {"detail": "password reset link has been sent to your email"},
-#                 status=status.HTTP_200_OK,
-#             )
-#         else:
-#             return Response(
-#                 {"error": "Email not sent"}, status=status.HTTP_400_BAD_REQUEST
-#             )
-
 
 class PassengerRegistration(CreateAPIView):
     # parser_classes = ( MultiPartParser, FormParser,JSONParser,FileUploadParser)
-    serializer_class = PassangerSerializier
+    serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
        
@@ -273,15 +204,18 @@ class PassengerRegistration(CreateAPIView):
 
     def perform_create(self, serializer):
  
-        passenger_obj = serializer.save()
-        user = passenger_obj.user
+        user_passenger_obj = serializer.save()
+      
 
-        otp = send_otp(user)
-        user.otp = otp
-        user.save()
+        otp = send_otp(user_passenger_obj)
+        if otp:
+            user_passenger_obj.otp = otp
+            user_passenger_obj.save()
+            return {"message":f"OTP sent to {user_passenger_obj.email}", "user_id":f"{user_passenger_obj.id}"}
+        
+        return {'error': f'Error occured while generating OTP for {user_passenger_obj.email}'}
 
-        return {"message":f"OTP sent to {user.email}", "user_id":f"{user.id}"}
-    
+
 class RiderRegistration(CreateAPIView):
     parser_classes = ( MultiPartParser, FormParser,JSONParser,FileUploadParser)
     serializer_class = RiderSerializer

@@ -66,35 +66,11 @@ class User(AbstractBaseUser,PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     otp = models.CharField(max_length=10,null = True, blank = True)
     is_verified = models.BooleanField(default=False)
-    user_type = models.CharField(choices=user_type, max_length=10)
+    user_type = models.CharField(choices=user_type, max_length=10, default = 'passenger')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = UserManager()
 
-# class passenger(models.Model):
-#     user = models.OneToOneField(User,on_delete=models.CASCADE,null = True, blank = True)
-#     card = models.ForeignKey(card_detail, on_delete=models.SET_NULL,blank = True,null = True)
-#     picture = models.ImageField(upload_to=upload_data,null=True,blank=True)
 
-# class rider(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.SET_NULL, null = True, blank = True)
-#     picture = models.ImageField(upload_to=upload_data,null=True,blank=True)
-#     vehicle = models.ForeignKey(vehicle, on_delete=models.SET_NULL, null = True, blank = True)
-#     account = models.OneToOneField(account, on_delete=models.SET_NULL,null=True,blank=True)
-#     route_from = models.CharField(max_length=125)
-#     route_to = models.CharField(max_length=125)
-#     bus_stop = models.CharField(max_length=125)
-#     licence = models.FileField(upload_to=upload_data,null=True,blank=True)
-#     price = models.CharField(max_length=20)
-#     # account = models.OneToOneField
-
-# class vehicle(models.Model):
-#     rider = models.ForeignKey(rider, on_delete=models.SET_NULL, null = True, blank = True)
-#     picture = models.ImageField(upload_to=upload_vehicle_pic,null=True,blank=True)
-#     type = models.CharField(max_length=125)
-#     brand = models.CharField(max_length=125)
-#     plate_no = models.CharField(max_length=125)
-#     seat_cap = models.IntegerField()
- 

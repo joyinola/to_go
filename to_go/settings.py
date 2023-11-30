@@ -34,7 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -100,7 +100,10 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
-        'rest_framework.parsers.MultiPartParser'
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.FileUploadParser'
+        # MultiPartParser, FormParser,JSONParser,FileUploadParser
     )    
 } 
 
@@ -110,8 +113,8 @@ REST_FRAMEWORK = {
 
 DATABASES = {  
         'default': {  
-            'ENGINE': 'django.db.backends.postgresql', 
-            # 'ENGINE': 'django.db.backends.mysql',
+            # 'ENGINE': 'django.db.backends.postgresql', 
+            'ENGINE': 'django.db.backends.mysql', 
             'NAME': os.getenv('database'),  
             'USER': os.getenv('user'),  
             'PASSWORD': os.getenv('password'),  

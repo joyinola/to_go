@@ -45,6 +45,7 @@ def send_otp(user):
         )
         return otp
     except Exception as exception:
+        print(exception)
         return False
     
 def verify_otp(user,otp):
