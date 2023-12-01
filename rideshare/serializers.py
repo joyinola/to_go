@@ -56,6 +56,7 @@ class RiderSerializer(serializers.ModelSerializer):
             "user",
             "vehicle",
             "route_from",
+            "route_to",
             "price",
             "today_earnings",
             "today_trips_no",

@@ -151,8 +151,8 @@ class ListCusOrder(ListAPIView):
         passenger_obj = User.objects.get(id=request.user.id)
 
         query = Order.objects.filter(
-            passenger=passenger_obj
-        )  ###add has_paid = True into query
+            passenger=passenger_obj,has_paid = True
+        )  
         serializer = OrderSerializer(query, many=True)
         return Response(serializer.data)
 
@@ -496,6 +496,13 @@ class DeleteLandmark(DestroyAPIView):
         get_landmarks = RiderLandmark.objects.filter(rider=get_rider.id)
         serializer = self.get_serializer(get_landmarks, many=True)
         return Response(serializer.data)
+
+
+class GetRiderDetail(RetrieveAPIView):
+    serializer_class = RiderSerializer
+    permission_classes = [IsAuthenticated & IsVerifiedAndPassanger]
+    queryset = Rider.objects.all()
+    lookup_field = 'id'
 
 
 class Webhook(APIView):  # webhook for receiving and sending payment
