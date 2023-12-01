@@ -409,6 +409,7 @@ class CreateUpdateBankAccount(CreateAPIView):
             "account_number": request.data.get("account_number"),
         }
 
+
         acnt_no = verify_account_no(data)
 
         if acnt_no.get("status") == True:
@@ -513,6 +514,7 @@ class Webhook(APIView):  # webhook for receiving and sending payment
         if request.data.get("event") == "charge.success" and int(
             order_obj.landmark.price
         ) * 100 == request.data.get("data").get("amount"):
+
             order_obj.trip.rider.vehicle.save()
             order_obj.has_paid = True
             order_obj.rider_pay_ref = uuid.uuid4()
@@ -525,5 +527,6 @@ class Webhook(APIView):  # webhook for receiving and sending payment
                 "reference": order_obj.rider_pay_ref,
                 "recipient": order_obj.rider.account.recipient_code,
             }
+
             make_transfer(data)
         return Response(status=status.HTTP_200_OK)

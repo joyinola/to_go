@@ -54,6 +54,6 @@ urlpatterns = [
     path("update_trip_status/", UpdateTripStatus.as_view(), name="update-trip-status"),
     path("webhook/", Webhook.as_view(), name="webhook-url"),
     path("completed_trips/", ViewCompletedTrips.as_view(), name="completed-trips"),
-    path("ongoing_trip/", ViewOngoingTrips.as_view(), name="ongoing-trips"),
+
     path("get_rider_detail/<int:id>/", GetRiderDetail().as_view(), name = "get-rider-detail")
 ]
