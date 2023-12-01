@@ -80,8 +80,11 @@ class PassangerSerializier(serializers.ModelSerializer):
 
   
     def get_last_order(self,obj):
-        order = OrderSerializer(Order.objects.filter(passenger = obj).last())
-        return order.data
+        try:
+            order = OrderSerializer(Order.objects.filter(passenger = obj).last())
+            return order.data
+        except: 
+            return None
     
         
 class RiderSerializer(serializers.ModelSerializer):
