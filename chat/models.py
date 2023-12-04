@@ -3,17 +3,15 @@
 # # Create your models here.
 
 # class Chat(models.Model):
-#     account_owner =  models.OneToOneField(User, on_delete=models.SET_NULL)
-#     chat_name = models.OneToOneField(User, on_delete=models.SET_NULL)
-
+#   user_1 = models.ForeignKey(User, on_delete=models.CASCADE)
+#   user_2 = models.ForeignKey(User, on_delete=models.CASCADE)
 
     
 # class Messages(models.Model):
-#     chat = models.OneToOneField(Chat, on_delete=models.CASCADE)
-#     sender = models.OneToOneField(User,on_delete=models.SET_NULL )
-#     receiver = models.OneToOneField(User, on_delete=models.SET_NULL)
-#     text = models.TextField()
+#     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
+#     sender = models.ForeignKey(User,on_delete=models.SET_NULL )
+#     message = models.TextField()
 #     created_at = models.DateTimeField(auto_now_add=True)
-
+#     # unread = models.BooleanField(default=False)
 #     class Meta:
 #         ordering = ['created_at']
