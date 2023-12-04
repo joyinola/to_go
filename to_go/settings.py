@@ -42,7 +42,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    "corsheaders.middleware.CorsMiddleware",
+
     "daphne",
     "channels",
     "django.contrib.admin",
