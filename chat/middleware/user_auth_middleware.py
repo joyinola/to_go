@@ -1,12 +1,10 @@
 import os
 import jwt
 
+
 from django.contrib.auth import get_user_model
-from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
-
-User = get_user_model()
-
+from account.models import User
 
 class UserAuthMiddleware:
     def __init__(self, app):
