@@ -34,7 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -93,6 +93,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "to_go.wsgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.getenv('REDISCLOUD_URL')],
+        },
+    },
+}
 
 REST_FRAMEWORK = {
    'NON_FIELD_ERRORS_KEY':'error',

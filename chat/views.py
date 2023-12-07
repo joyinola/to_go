@@ -1,30 +1,52 @@
-# from django.shortcuts import render
-# from rest_framework.generics import ListAPIView
-# from rest_framework.response import Response
+from django.shortcuts import render
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
 
-# from .serializers import ChatSerializer
-# from .models import Chat
-# """
-# list of chat -- people who has a chat history with you, each chat has messages 
-# """
+from .serializers import ChatSerializer, MessageSerializer
+from .models import Chat, Messages
 
-# class ListChatView(ListAPIView):
 
-#     serializer_class = ChatSerializer
-#     queryset = Chat.objects.all()
+from django.db.models import Q
 
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.filter_queryset(self.get_queryset())
+"""
+list of chat -- people who has a chat history with you, each chat has messages 
+"""
 
-#         page = self.paginate_queryset(queryset)
-#         if page is not None:
-#             serializer = self.get_serializer(page, many=True, context = {'user_id': request.user})
-#             return self.get_paginated_response(serializer.data)
 
-#         serializer = self.get_serializer(queryset, many=True,context = {'user_id': request.user})
-#         return Response(serializer.data)
+class ListChatView(ListAPIView):
+    serializer_class = ChatSerializer
 
-    
+    def list(self, request, *args, **kwargs):
+        queryset = Chat.objects.filter(Q(user_1=request.user) | Q(user_2=request.user))
 
-# # class MessageView(ListAPIView):
-# #     pass
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(
+                page, many=True, context={"user_id": request.user}
+            )
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(
+            queryset, many=True, context={"user_id": request.user}
+        )
+        return Response(serializer.data)
+
+
+class MessageView(ListAPIView):
+    serializer_class = MessageSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = Messages.objects.filter(chat=request.GET.get("chat_id"))
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(
+                page, many=True, context={"user_id": request.user}
+            )
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(
+            queryset, many=True, context={"user_id": request.user}
+        )
+
+        return Response(serializer.data)

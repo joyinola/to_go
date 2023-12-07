@@ -23,6 +23,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include('rideshare.urls')),
     path('api/account/', include('account.urls')),
-    # path('chat/', include('chat.urls')),
+    path('chat/', include('chat.urls')),
     # path('api/passenger/', include('passenger.urls')),
 ]  
