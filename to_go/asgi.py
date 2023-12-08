@@ -9,11 +9,12 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 
 
 import os
- 
-from channels.routing import ProtocolTypeRouter,URLRouter
+
 from django.core.asgi import get_asgi_application
-from chat.middleware.user_auth_middleware import UserAuthMiddleware
 django_asgi_app = get_asgi_application()
+
+from chat.middleware.user_auth_middleware import UserAuthMiddleware
+from channels.routing import ProtocolTypeRouter,URLRouter
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "to_go.settings")
 
@@ -30,5 +31,6 @@ application = ProtocolTypeRouter({
 })
 
 # web: daphne to_go.asgi:application --port $PORT --bind 0.0.0.0 -v2
+
 # worker: python manage.py runworker channel_layer -v2
  
