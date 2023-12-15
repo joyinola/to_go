@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'cloudinary'
     
 ]
+CSRF_TRUSTED_ORIGINS = ["https://*.herokuapp.com","http://127.0.0.1","http://localhost","http://127.0.0.1:8000"]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
