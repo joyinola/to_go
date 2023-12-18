@@ -166,11 +166,46 @@ class UpdateOrderStatus(UpdateAPIView):
 
         # if status == 'completed' and trip_.rider_status == 'completed':
         #     send_driver_money()
+        if status == "Completed" and order_.passenger_order_status == "Completed":
+                data = {
+                    "amount": order_.rider_pay,
+                    "reference": order_.rider_pay_ref,
+                    "recipient": order_.rider.account.recipient_code,
+                }
+                make_transfer(data)
 
         order_.passenger_order_status = status
         order_.save()
 
         serailized_trip = OrderSerializer(order_)
+        return Response(serailized_trip.data)
+
+
+class UpdateTripStatus(UpdateAPIView):
+    permission_classes = [IsAuthenticated & IsVerifiedAndRider]
+
+    def partial_update(self, request, *args, **kwargs):
+        trip_obj = Trip.objects.get(id=request.data.get("trip_id"))
+        status = request.data.get("status")
+        trip_obj.rider_order_status = status
+        trip_obj.save()
+
+        orders = Order.objects.filter(trip=trip_obj)
+        for order in orders:
+            order.rider_order_status = status
+            order.save()
+            if status == "Pick up":
+                order.order_datetime = datetime.datetime.now()
+                trip_obj.started_at = datetime.datetime.now()
+            if status == "Completed" and order.passenger_order_status == "Completed":
+                data = {
+                    "amount": order.rider_pay,
+                    "reference": order.rider_pay_ref,
+                    "recipient": order.rider.account.recipient_code,
+                }
+                make_transfer(data)
+
+        serailized_trip = TripSerializer(trip_obj)
         return Response(serailized_trip.data)
 
 
@@ -207,6 +242,7 @@ class CreateOrder(CreateAPIView, mixins.UpdateModelMixin):
         return Response(
             serializer2.data, status=status.HTTP_201_CREATED, headers=headers
         )
+
 
 class YesConfirmedStatus(UpdateAPIView):
     """
@@ -370,34 +406,6 @@ class GetUserProfile(RetrieveAPIView):
         return Response(serializer.data)
 
 
-class UpdateTripStatus(UpdateAPIView):
-    permission_classes = [IsAuthenticated & IsVerifiedAndRider]
-
-    def partial_update(self, request, *args, **kwargs):
-        trip_obj = Trip.objects.get(id=request.data.get("trip_id"))
-        status = request.data.get("status")
-        trip_obj.rider_order_status = status
-        trip_obj.save()
-
-        orders = Order.objects.filter(trip=trip_obj)
-        for order in orders:
-            order.rider_order_status = status
-            order.save()
-            if status == "Pick up":
-                order.order_datetime = datetime.datetime.now()
-                trip_obj.started_at = datetime.datetime.now()
-            if status == "Completed" and order.passenger_order_status == "Completed":
-                data = {
-                    "amount": order.rider_pay,
-                    "reference": order.rider_pay_ref,
-                    "recipient": order.rider.account.recipient_code,
-                }
-                make_transfer(data)
-
-        serailized_trip = TripSerializer(trip_obj)
-        return Response(serailized_trip.data)
-
-
 class CreateUpdateBankAccount(CreateAPIView):
     permission_classes = [IsAuthenticated & IsVerifiedAndRider]
 
@@ -510,23 +518,29 @@ class Webhook(APIView):  # webhook for receiving and sending payment
         order_obj = Order.objects.get(
             reference=request.data.get("data").get("reference")
         )
+        order_obj.has_paid = True
 
-        if request.data.get("event") == "charge.success" and int(
-            order_obj.landmark.price
-        ) * 100 == request.data.get("data").get("amount"):
+        # order_obj = Order.objects.get(
+        #     reference=request.data.get("data").get("reference")
+        # )
 
-            order_obj.trip.rider.vehicle.save()
-            order_obj.has_paid = True
-            order_obj.rider_pay_ref = uuid.uuid4()
-            order_obj.order_datetime = datetime.datetime.now()
-            order_obj.save()
+        # if request.data.get("event") == "charge.success" and int(
+        #     order_obj.landmark.price
+        # ) * 100 == request.data.get("data").get("amount"):
 
-        elif request.data.get("event") == "transfer.failed":
-            data = {
-                "amount": order_obj.rider_pay,
-                "reference": order_obj.rider_pay_ref,
-                "recipient": order_obj.rider.account.recipient_code,
-            }
+        #     order_obj.trip.rider.vehicle.save()
+        #     order_obj.has_paid = True
+        #     order_obj.rider_pay_ref = uuid.uuid4()
+        #     order_obj.order_datetime = datetime.datetime.now()
+        #     order_obj.save()
 
-            make_transfer(data)
+        # elif request.data.get("event") == "transfer.failed":
+        #     #if transfer fails, retry
+        #     data = {
+        #         "amount": order_obj.rider_pay,
+        #         "reference": order_obj.rider_pay_ref,
+        #         "recipient": order_obj.rider.account.recipient_code,
+        #     }
+
+        #     make_transfer(data)
         return Response(status=status.HTTP_200_OK)

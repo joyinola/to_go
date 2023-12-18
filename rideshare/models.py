@@ -169,12 +169,15 @@ class RiderLandmark(models.Model):
 
     @property
     def service_charge(self):
+        
         if 200 <= int(self.rider_price) <= 800:
             return 80
-        if 900 <= int(self.rider_price) <= 2500:
+        elif 900 <= int(self.rider_price) <= 2500:
             return 90
-        if int(self.rider_price) <= 2600:
+        elif int(self.rider_price) >= 2600:
             return 100
+        else:
+            return 0
 
     @property
     def price(self):
