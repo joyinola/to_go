@@ -515,7 +515,7 @@ class GetRiderDetail(RetrieveAPIView):
 
 class Webhook(APIView):  # webhook for receiving and sending payment
     def post(self, request, *arg, **kwarg):
-        
+        print("hiiiiiiii")
         order_obj = Order.objects.get(
             reference=request.data.get("data").get("reference")
         )
