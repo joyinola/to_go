@@ -201,7 +201,7 @@ class UpdateTripStatus(UpdateAPIView):
                 data = {
                     "amount": order.rider_pay,
                     "reference": order.rider_pay_ref,
-                    "recipient": order.rider.account.recipient_code,
+                    "recipient": order.landmark.rider.account.recipient_code,
                 }
                 make_transfer(data)
 
@@ -515,34 +515,34 @@ class GetRiderDetail(RetrieveAPIView):
 
 class Webhook(APIView):  # webhook for receiving and sending payment
     def post(self, request, *arg, **kwarg):
-        print("hiiiiiiii")
+  
+        order_obj = Order.objects.get(
+            reference = request.data.get("data").get("reference")
+        )
+        order_obj.has_paid = True
+        order_obj.save() 
+
         order_obj = Order.objects.get(
             reference=request.data.get("data").get("reference")
         )
-        order_obj.has_paid = True
-        order_obj.save()
 
-        # order_obj = Order.objects.get(
-        #     reference=request.data.get("data").get("reference")
-        # )
+        if request.data.get("event") == "charge.success" and int(
+            order_obj.landmark.price
+        ) * 100 == request.data.get("data").get("amount"):
 
-        # if request.data.get("event") == "charge.success" and int(
-        #     order_obj.landmark.price
-        # ) * 100 == request.data.get("data").get("amount"):
+            order_obj.trip.rider.vehicle.save()
+            order_obj.has_paid = True
+            order_obj.rider_pay_ref = uuid.uuid4()
+            order_obj.order_datetime = datetime.datetime.now()
+            order_obj.save()
 
-        #     order_obj.trip.rider.vehicle.save()
-        #     order_obj.has_paid = True
-        #     order_obj.rider_pay_ref = uuid.uuid4()
-        #     order_obj.order_datetime = datetime.datetime.now()
-        #     order_obj.save()
+        elif request.data.get("event") == "transfer.failed":
+            #if transfer fails, retry
+            data = {
+                "amount": order_obj.rider_pay,
+                "reference": order_obj.rider_pay_ref,
+                "recipient": order_obj.rider.account.recipient_code,
+            }
 
-        # elif request.data.get("event") == "transfer.failed":
-        #     #if transfer fails, retry
-        #     data = {
-        #         "amount": order_obj.rider_pay,
-        #         "reference": order_obj.rider_pay_ref,
-        #         "recipient": order_obj.rider.account.recipient_code,
-        #     }
-
-        #     make_transfer(data)
+            make_transfer(data)
         return Response(status=status.HTTP_200_OK)
