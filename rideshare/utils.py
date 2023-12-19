@@ -9,6 +9,7 @@ headers = {"Authorization": f"Bearer {os.getenv('paystack_secret')}"}
 
 def initialize_trans(data):
     """
+    initializes transactions i.e passenger to togo
     receives email and amount
     sends auth url and reference
     """
@@ -23,6 +24,9 @@ def initialize_trans(data):
 
 
 def make_transfer(data):
+    """
+    transfer money to rider
+    """
     url = "https://api.paystack.co/transfer"
     data = {
         "source": "balance",
