@@ -199,10 +199,12 @@ class UpdateTripStatus(UpdateAPIView):
                 trip_obj.started_at = datetime.datetime.now()
             if status == "Completed" and order.passenger_order_status == "Completed":
                 data = {
-                    "amount": order.rider_pay,
+                    "amount": int(order.rider_pay) * 100,
+                    # "amount": 37800,
                     "reference": order.rider_pay_ref,
                     "recipient": order.landmark.rider.account.recipient_code,
                 }
+                print("make transfer data ", data)
                 make_transfer(data)
 
         serailized_trip = TripSerializer(trip_obj)
@@ -515,7 +517,8 @@ class GetRiderDetail(RetrieveAPIView):
 
 class Webhook(APIView):  # webhook for receiving and sending payment
     def post(self, request, *arg, **kwarg):
-  
+
+        print(request.data.get('data'))
         order_obj = Order.objects.get(
             reference = request.data.get("data").get("reference")
         )
