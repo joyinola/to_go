@@ -16,6 +16,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 from .models import Rider, Order, Trip, Vehicle, RiderLandmark
 from .serializers import (
@@ -519,15 +520,15 @@ class Webhook(APIView):  # webhook for receiving and sending payment
     def post(self, request, *arg, **kwarg):
 
         print(request.data.get('data'))
-        order_obj = Order.objects.get(
-            reference = request.data.get("data").get("reference")
-        )
-        order_obj.has_paid = True
-        order_obj.save() 
+        #if passenger pay, ref sent back by paystack is the order ref of order obj(reference) 
 
-        order_obj = Order.objects.get(
-            reference=request.data.get("data").get("reference")
-        )
+        #if togo pays rider, ref sent back by paystack is the rider pay ref of order obj(rider_pay_ref)
+
+        order_obj = Order.objects.filter(
+            Q(reference = request.data.get("data").get("reference") ) |
+            Q(rider_pay_ref = request.data.get("data").get("reference") ) )[0]
+     
+
 
         if request.data.get("event") == "charge.success" and int(
             order_obj.landmark.price
@@ -549,3 +550,4 @@ class Webhook(APIView):  # webhook for receiving and sending payment
 
             make_transfer(data)
         return Response(status=status.HTTP_200_OK)
+

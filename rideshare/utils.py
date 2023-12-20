@@ -34,21 +34,21 @@ def make_transfer(data):
         "recipient": data.get("recipient"),
         "reference": data.get("reference"),
     }
-    response = requests.post(url, headers=headers)
+    response = requests.post(url, data = data, headers=headers)
     print(response.json())
     return response.json()
 
 
-def finalize_transfer(data):
-    url = "https://api.paystack.co/finalize_transfer"
-    data = {
-        "transfer_code": data.get("tranfer_code"),
-        "amount": data.get("amount"),
-        "recipient": data.get("recipient"),
-    }
-    response = requests.post(url, headers=headers)
+# def finalize_transfer(data):
+#     url = "https://api.paystack.co/finalize_transfer"
+#     data = {
+#         "transfer_code": data.get("tranfer_code"),
+#         "amount": data.get("amount"),
+#         "recipient": data.get("recipient"),
+#     }
+#     response = requests.post(url, headers=headers)
 
-    return response.json()
+#     return response.json()
 
 
 def verify_account_no(data):
