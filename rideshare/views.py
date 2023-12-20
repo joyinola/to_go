@@ -224,9 +224,9 @@ class CreateOrder(CreateAPIView, mixins.UpdateModelMixin):
         passenger_new = get_object_or_404(User, id=request.user.id)
         orders_count = Order.objects.filter(
             passenger=passenger_new, trip=trip_new
-        ).count()
+        ).exclude(has_paid = True).count()
         if not orders_count == 0:
-            return Response({"message": "you are already registered on this trip"})
+            return Response({"message": "you are already registered on this trip, simply proceed to pay"})
         data_ = {
             "passenger": passenger_new.id,
             "trip": request.data.get("trip_id"),
