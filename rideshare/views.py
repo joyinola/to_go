@@ -205,7 +205,7 @@ class UpdateTripStatus(UpdateAPIView):
                     "reference": order.rider_pay_ref,
                     "recipient": order.landmark.rider.account.recipient_code,
                 }
-                print("make transfer data ", data)
+
                 make_transfer(data)
 
         serailized_trip = TripSerializer(trip_obj)
@@ -519,7 +519,6 @@ class GetRiderDetail(RetrieveAPIView):
 class Webhook(APIView):  # webhook for receiving and sending payment
     def post(self, request, *arg, **kwarg):
 
-        print(request.data.get('data'))
         #if passenger pay, ref sent back by paystack is the order ref of order obj(reference) 
 
         #if togo pays rider, ref sent back by paystack is the rider pay ref of order obj(rider_pay_ref)
